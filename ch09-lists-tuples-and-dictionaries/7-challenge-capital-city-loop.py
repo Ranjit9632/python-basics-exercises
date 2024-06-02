@@ -58,11 +58,13 @@ capitals_dict = {
 
 # Pull random state and capital pair from the dict by casting to list of tuples
 state, capital = random.choice(list(capitals_dict.items()))
-
+print(state)
 # Game loop continues until the user inputs "exit"
 # or guesses the correct capital
 while True:
-    guess = input(f"What is the capital of '{state}'? ").lower()
+    # all the above words of capitals and states start with capital letter so no use of .lower() 
+    print("enter the state capital word with first letter only as capital")
+    guess = input(f"What is the capital of '{state}'? ")
     if guess == "exit":
         print(f"The capital of '{state}' is '{capital}'.")
         print("Goodbye")
