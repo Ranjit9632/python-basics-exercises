@@ -1,47 +1,46 @@
-# 14.5 - Challenge: PdfFileSplitter Class
-# Solution to challenge
-
+# the below code will work for python > 3.5
 from pathlib import Path
-
-from PyPDF2 import PdfFileReader, PdfFileWriter
+# the imported objects are as per the latest PyPDF2
+from PyPDF2 import PdfReader, PdfWriter
 
 
 class PdfFileSplitter:
-    """Class for splitting a PDF into two files."""
+    # class instantiated with path string
+    # pdf reader class cannot be used from inside the class as it is not defined only in init
+    def __init__(self,pdf_path):
+        self.pdf_path = pdf_path 
 
-    def __init__(self, pdf_path):
-        # Open the PDF file with a new PdfFileReader instance
-        self.pdf_reader = PdfFileReader(pdf_path)
-        # Initialize the .writer1 and .writer2 attributes to None
-        self.writer1 = None
-        self.writer2 = None
+    def split(self, superpoint, breakpoint):
+         # instantiate the writerobject
+        self.writer1 = PdfWriter()
+        self.writer2 = PdfWriter()    
 
-    def split(self, breakpoint):
-        """Split the PDF into two PdfFileWriter instances"""
-        # Set .writer1 and .writer2 to new PdfFileWriter intances
-        self.writer1 = PdfFileWriter()
-        self.writer2 = PdfFileWriter()
-        # Add all pages up to, but not including, the breakpoint
-        # to writer1
-        for page in self.pdf_reader.pages[:breakpoint]:
-            self.writer1.addPage(page)
-        # Add all the remaining pages to writer2
-        for page in self.pdf_reader.pages[breakpoint:]:
-            self.writer2.addPage(page)
+        # break the pages till breakpoint
+        for page in range(breakpoint):
+            pages1 = self.pdf_path.pages[page]
+            self.writer1.add_page(pages1)
+        # get the last page as input and remember order is positional argument and then key argument   
+        for page in range(breakpoint, superpoint):
+            pages1 = self.pdf_path.pages[page]
+            self.writer2.add_page(pages1)
 
-    def write(self, filename):
-        """Write both PdfFileWriter instances to files"""
-        # Write the first file to <filename>_1.pdf
-        with Path(filename + "_1.pdf").open(mode="wb") as output_file:
-            self.writer1.write(output_file)
-        # Write the second file to <filename>_2.pdf
-        with Path(filename + "_2.pdf").open(mode="wb") as output_file:
-            self.writer2.write(output_file)
+    def write(self):
+        # save the files with 1 and 2 names then check it with print statement
+        with Path("1.pdf").open(mode = "wb") as file:
+            self.writer1.write(file)
+            print(f"File 1.pdf created successfully.")
 
+        with Path("2.pdf").open(mode = "wb") as file:
+            self.writer2.write(file)
 
-# Split the Pride_and_Prejudice.pdf file into two PDFs, the first
-# containing the first 150 pages, and the second containing the
-# remaining pages.
-pdf_splitter = PdfFileSplitter("ch14-interact-with-pdf-files/practice_files/Pride_and_Prejudice.pdf")
-pdf_splitter.split(breakpoint=150)
-pdf_splitter.write("pride_split")
+pdf_og = Path.home()/"Python_Complete_Guide.pdf"
+print(pdf_og)
+# pdf reader instance
+input_pdf = PdfReader(str(pdf_og))
+endpage = len(input_pdf.pages)
+print(endpage)
+
+# class is called with the instance created
+pf_splitter = PdfFileSplitter(input_pdf)
+pf_splitter.split(endpage,breakpoint = 150)
+pf_splitter.write()
